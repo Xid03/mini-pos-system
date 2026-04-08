@@ -1,8 +1,6 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/config/app.php';
+require_once __DIR__ . '/includes/bootstrap.php';
 
-header('Location: ' . url('login.php'));
-exit;
-
+redirect(is_logged_in() ? user_home_path() : 'login.php');

@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+
+$currentUserName = current_user_name();
+$currentUserRole = ucfirst(current_user_role());
 ?>
 <header class="topbar">
     <div class="topbar__left">
@@ -24,12 +27,17 @@ declare(strict_types=1);
         </button>
 
         <div class="user-pill">
-            <div class="user-pill__avatar">MP</div>
+            <div class="user-pill__avatar"><?= htmlspecialchars(user_initials($currentUserName), ENT_QUOTES, 'UTF-8'); ?></div>
             <div>
-                <strong>Manager Preview</strong>
-                <span>Admin Dashboard</span>
+                <strong><?= htmlspecialchars($currentUserName, ENT_QUOTES, 'UTF-8'); ?></strong>
+                <span><?= htmlspecialchars($currentUserRole, ENT_QUOTES, 'UTF-8'); ?> Account</span>
             </div>
         </div>
+
+        <form action="<?= htmlspecialchars(url('logout.php'), ENT_QUOTES, 'UTF-8'); ?>" method="post" class="m-0">
+            <button type="submit" class="btn icon-button" aria-label="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+        </form>
     </div>
 </header>
-

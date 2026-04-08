@@ -2,23 +2,46 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/app.php';
+require_once __DIR__ . '/auth.php';
 
 function navigation_items(): array
 {
     return [
-        ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'bi-grid-1x2-fill', 'href' => url('dashboard.php')],
-        ['key' => 'categories', 'label' => 'Categories', 'icon' => 'bi-tags-fill', 'href' => url('modules/categories/index.php')],
-        ['key' => 'products', 'label' => 'Products', 'icon' => 'bi-box-seam-fill', 'href' => url('modules/products/index.php')],
-        ['key' => 'inventory', 'label' => 'Inventory', 'icon' => 'bi-archive-fill', 'href' => url('modules/inventory/index.php')],
-        ['key' => 'pos', 'label' => 'Point of Sale', 'icon' => 'bi-receipt-cutoff', 'href' => url('modules/pos/index.php')],
-        ['key' => 'transactions', 'label' => 'Transactions', 'icon' => 'bi-cash-stack', 'href' => url('modules/transactions/index.php')],
-        ['key' => 'reports', 'label' => 'Reports', 'icon' => 'bi-bar-chart-fill', 'href' => url('modules/reports/index.php')],
+        ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'bi-grid-1x2-fill', 'href' => url('dashboard.php'), 'roles' => ['admin', 'cashier']],
+        ['key' => 'categories', 'label' => 'Categories', 'icon' => 'bi-tags-fill', 'href' => url('modules/categories/index.php'), 'roles' => ['admin']],
+        ['key' => 'products', 'label' => 'Products', 'icon' => 'bi-box-seam-fill', 'href' => url('modules/products/index.php'), 'roles' => ['admin']],
+        ['key' => 'inventory', 'label' => 'Inventory', 'icon' => 'bi-archive-fill', 'href' => url('modules/inventory/index.php'), 'roles' => ['admin']],
+        ['key' => 'pos', 'label' => 'Point of Sale', 'icon' => 'bi-receipt-cutoff', 'href' => url('modules/pos/index.php'), 'roles' => ['admin', 'cashier']],
+        ['key' => 'transactions', 'label' => 'Transactions', 'icon' => 'bi-cash-stack', 'href' => url('modules/transactions/index.php'), 'roles' => ['admin', 'cashier']],
+        ['key' => 'reports', 'label' => 'Reports', 'icon' => 'bi-bar-chart-fill', 'href' => url('modules/reports/index.php'), 'roles' => ['admin']],
     ];
 }
 
 function nav_item_class(string $currentPage, string $itemKey): string
 {
     return $currentPage === $itemKey ? 'nav-link active' : 'nav-link';
+}
+
+function visible_navigation_items(): array
+{
+    $role = current_user_role();
+
+    return array_values(array_filter(
+        navigation_items(),
+        static fn (array $item): bool => in_array($role, $item['roles'], true)
+    ));
+}
+
+function user_initials(string $fullName): string
+{
+    $parts = preg_split('/\s+/', trim($fullName)) ?: [];
+    $initials = '';
+
+    foreach (array_slice($parts, 0, 2) as $part) {
+        $initials .= strtoupper(substr($part, 0, 1));
+    }
+
+    return $initials !== '' ? $initials : 'MP';
 }
 
 function dashboard_summary_cards(): array
@@ -63,10 +86,20 @@ function low_stock_preview(): array
 function module_shortcuts(): array
 {
     return [
-        ['label' => 'Manage Categories', 'href' => url('modules/categories/index.php'), 'icon' => 'bi-tags-fill'],
-        ['label' => 'Manage Products', 'href' => url('modules/products/index.php'), 'icon' => 'bi-box-seam-fill'],
-        ['label' => 'Track Inventory', 'href' => url('modules/inventory/index.php'), 'icon' => 'bi-clipboard2-data-fill'],
-        ['label' => 'Open POS Module', 'href' => url('modules/pos/index.php'), 'icon' => 'bi-receipt-cutoff'],
+        ['label' => 'Manage Categories', 'href' => url('modules/categories/index.php'), 'icon' => 'bi-tags-fill', 'roles' => ['admin']],
+        ['label' => 'Manage Products', 'href' => url('modules/products/index.php'), 'icon' => 'bi-box-seam-fill', 'roles' => ['admin']],
+        ['label' => 'Track Inventory', 'href' => url('modules/inventory/index.php'), 'icon' => 'bi-clipboard2-data-fill', 'roles' => ['admin']],
+        ['label' => 'Open POS Module', 'href' => url('modules/pos/index.php'), 'icon' => 'bi-receipt-cutoff', 'roles' => ['admin', 'cashier']],
+        ['label' => 'View Transactions', 'href' => url('modules/transactions/index.php'), 'icon' => 'bi-cash-stack', 'roles' => ['admin', 'cashier']],
     ];
 }
 
+function visible_module_shortcuts(): array
+{
+    $role = current_user_role();
+
+    return array_values(array_filter(
+        module_shortcuts(),
+        static fn (array $item): bool => in_array($role, $item['roles'], true)
+    ));
+}

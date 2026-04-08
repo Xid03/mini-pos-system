@@ -1,15 +1,19 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/includes/helpers/ui.php';
+
+require_role('admin', 'cashier');
 
 $pageTitle = 'Dashboard';
 $currentPage = 'dashboard';
+$role = current_user_role();
 $summaryCards = dashboard_summary_cards();
 $highlights = dashboard_highlights();
 $recentActivities = recent_activity_rows();
 $lowStockItems = low_stock_preview();
-$shortcuts = module_shortcuts();
+$shortcuts = visible_module_shortcuts();
 
 require __DIR__ . '/includes/layout/app-shell-start.php';
 ?>
@@ -17,13 +21,12 @@ require __DIR__ . '/includes/layout/app-shell-start.php';
     <div class="hero-content glass-card">
         <span class="badge-soft-primary mb-3">
             <i class="bi bi-activity"></i>
-            Portfolio Dashboard Shell
+            <?= $role === 'admin' ? 'Admin Dashboard' : 'Cashier Dashboard'; ?>
         </span>
         <h3>Clean, modern POS operations designed for real-world portfolio storytelling.</h3>
         <p>
-            This Step 1 dashboard is intentionally structured for growth. We already have reusable layout includes,
-            a design system, responsive cards and tables, and placeholder business data ready for authentication,
-            CRUD modules, inventory flows, and sales transactions in the next steps.
+            Step 2 now includes real authentication and role checks. Admin users can access management modules and reports,
+            while cashier users stay focused on sales and transaction workflows inside the same shared layout system.
         </p>
         <div class="hero-actions">
             <a href="<?= htmlspecialchars(url('modules/pos/index.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary">
@@ -160,7 +163,7 @@ require __DIR__ . '/includes/layout/app-shell-start.php';
 </section>
 
 <footer class="footer-note">
-    <span>Version <?= APP_VERSION; ?> • Step 1 UI shell completed</span>
-    <span>Shared hosting friendly structure using plain PHP includes, Bootstrap, custom CSS, and small JavaScript helpers.</span>
+    <span>Version <?= APP_VERSION; ?> • Step 2 auth foundation completed</span>
+    <span>Shared hosting friendly structure using plain PHP, PDO prepared statements, Bootstrap, custom CSS, and session-based access control.</span>
 </footer>
 <?php require __DIR__ . '/includes/layout/app-shell-end.php'; ?>

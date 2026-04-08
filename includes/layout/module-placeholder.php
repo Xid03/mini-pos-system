@@ -48,10 +48,9 @@ require __DIR__ . '/app-shell-start.php';
 
 <section class="section-card glass-card">
     <h3 class="section-title">What Comes Next</h3>
-    <p class="section-subtitle">This placeholder exists so navigation stays intact during Step 1.</p>
+    <p class="section-subtitle">This placeholder exists so navigation stays intact while the remaining steps are built.</p>
     <div class="coming-soon-note mt-3">
         The real <?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?> workflow will be implemented in <?= htmlspecialchars($moduleStep, ENT_QUOTES, 'UTF-8'); ?>.
     </div>
 </section>
 <?php require __DIR__ . '/app-shell-end.php'; ?>
-

@@ -2,17 +2,20 @@
 
 Mini POS System is a portfolio-ready PHP and MySQL project focused on realistic point of sale and inventory workflows. The goal is to keep the codebase simple enough for interviews and shared hosting deployment while still demonstrating practical software engineering skills such as modular structure, UI consistency, authentication, CRUD, stock control, reporting, testing, and documentation.
 
-## Step 1 Status
+## Step 2 Status
 
-Step 1 sets up the visual and structural foundation only:
+Step 2 adds the backend foundation for authentication and role-based access:
 
 - project folder structure aligned for future POS, inventory, and reporting modules
 - shared PHP layout includes for reusable head, sidebar, topbar, auth shell, and dashboard shell
 - design system with Bootstrap plus custom CSS variables, cards, forms, tables, badges, and responsive dashboard styling
-- polished login page UI
-- dashboard layout shell with realistic preview cards and tables
+- MySQL schema for users, categories, products, inventory movements, sales, sale items, and audit logs
+- PDO database connection setup with prepared statements
+- login authentication with PHP sessions
+- role-based access for `admin` and `cashier`
+- logout flow
 
-No database logic, authentication logic, CRUD operations, or transactions are implemented yet in this step.
+CRUD, inventory operations, POS transactions, and reports are still scheduled for later steps.
 
 ## Tech Stack
 
@@ -76,24 +79,36 @@ The interface is designed to feel like a modern admin dashboard instead of a bas
 - responsive sidebar and topbar layout
 - polished POS-friendly visual system ready for future modules
 
+## Database Setup
+
+1. Create a MySQL database named `mini_pos_system`
+2. Import:
+   - `database/schema/minipos_system.sql`
+   - `database/seeds/step2_sample_users.sql`
+3. Copy `includes/config/database.local.example.php` to `includes/config/database.local.php`
+4. Update the MySQL credentials in `includes/config/database.local.php`
+
+### Demo Accounts
+
+- Admin
+  - email: `admin@minipos.local`
+  - password: `Admin@123`
+- Cashier
+  - email: `cashier@minipos.local`
+  - password: `Cashier@123`
+
 ## Local Preview
 
 Use a local PHP server or XAMPP/Laragon and open the project in your browser.
-
-### Example with PHP built-in server
 
 ```bash
 php -S localhost:8000
 ```
 
-Then visit:
-
-- `http://localhost:8000/login.php`
-- `http://localhost:8000/dashboard.php`
+Then visit `http://localhost:8000/login.php`
 
 ## Planned Build Roadmap
 
-- Step 2: database schema, connection, authentication, roles, logout
 - Step 3: categories and products CRUD
 - Step 4: inventory management
 - Step 5: POS transactions
@@ -101,4 +116,3 @@ Then visit:
 - Step 7: reports
 - Step 8: audit log, backup/export, validation and security hardening
 - Step 9: final polish, sample data, full documentation, deployment notes
-

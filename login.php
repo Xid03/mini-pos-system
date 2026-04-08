@@ -1,7 +1,25 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/config/app.php';
+require_once __DIR__ . '/includes/bootstrap.php';
+
+redirect_if_authenticated();
+
+$email = '';
+$loginErrors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim((string) ($_POST['email'] ?? ''));
+    $password = (string) ($_POST['password'] ?? '');
+    $result = attempt_login($email, $password);
+
+    if (($result['success'] ?? false) === true) {
+        set_flash_message('success', 'Welcome back, ' . current_user_name() . '.');
+        redirect(user_home_path());
+    }
+
+    $loginErrors = $result['errors'] ?? ['Unable to sign in.'];
+}
 
 $pageTitle = 'Welcome Back';
 require __DIR__ . '/includes/layout/auth-shell-start.php';
@@ -79,27 +97,42 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
             <div class="auth-form-panel">
                 <div class="auth-form-shell">
                     <span class="badge-soft-info mb-3">
-                        <i class="bi bi-boxes"></i>
-                        Step 1 UI Foundation
+                        <i class="bi bi-shield-lock-fill"></i>
+                        Step 2 Authentication Ready
                     </span>
                     <h2>Sign in to continue</h2>
-                    <p>Authentication logic will be implemented in Step 2. For now, this page demonstrates the final UI direction and shared form styling.</p>
+                    <p>Authentication is now connected with PHP sessions, MySQL, prepared statements, role-based access, and logout support.</p>
+
+                    <?php require __DIR__ . '/includes/layout/flash-alerts.php'; ?>
+
+                    <?php if ($loginErrors !== []): ?>
+                        <div class="alert alert-danger custom-alert" role="alert">
+                            <i class="bi bi-exclamation-octagon-fill"></i>
+                            <div>
+                                <?php foreach ($loginErrors as $error): ?>
+                                    <div><?= htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?></div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="demo-account-grid">
                         <div class="demo-card">
-                            <span>Role preview</span>
-                            <strong>Admin Dashboard</strong>
+                            <span>Admin demo account</span>
+                            <strong>admin@minipos.local</strong>
+                            <span class="mt-2">Password: Admin@123</span>
                         </div>
                         <div class="demo-card">
-                            <span>Role preview</span>
-                            <strong>Cashier Workspace</strong>
+                            <span>Cashier demo account</span>
+                            <strong>cashier@minipos.local</strong>
+                            <span class="mt-2">Password: Cashier@123</span>
                         </div>
                     </div>
 
-                    <form action="<?= htmlspecialchars(url('dashboard.php'), ENT_QUOTES, 'UTF-8'); ?>" method="post" class="mt-2">
+                    <form action="<?= htmlspecialchars(url('login.php'), ENT_QUOTES, 'UTF-8'); ?>" method="post" class="mt-2">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="admin@minipos.local" autocomplete="email">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="admin@minipos.local" autocomplete="email" value="<?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>">
                         </div>
 
                         <div class="mb-3">
@@ -119,17 +152,17 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
                                     Remember this device
                                 </label>
                             </div>
-                            <a href="#" class="text-decoration-none fw-semibold text-primary">Forgot password?</a>
+                            <span class="text-secondary small">Use the seed accounts after importing the Step 2 SQL files.</span>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-box-arrow-in-right me-2"></i>
-                            Enter Dashboard Preview
+                            Sign In
                         </button>
                     </form>
 
                     <div class="helper-note">
-                        This Step 1 login form is a visual shell only. The secure PHP authentication flow, prepared statements, session handling, and role-based access will be connected in Step 2.
+                        Setup note: copy <strong>includes/config/database.local.example.php</strong> to <strong>includes/config/database.local.php</strong>, update your MySQL credentials, then import the schema and seed SQL files.
                     </div>
                 </div>
             </div>
@@ -137,4 +170,3 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
     </section>
 </div>
 <?php require __DIR__ . '/includes/layout/auth-shell-end.php'; ?>
-

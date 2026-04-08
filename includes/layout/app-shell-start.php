@@ -10,4 +10,4 @@ require __DIR__ . '/head.php';
     <div class="app-main">
         <?php require __DIR__ . '/topbar.php'; ?>
         <main class="app-content">
-
+            <?php require __DIR__ . '/flash-alerts.php'; ?>

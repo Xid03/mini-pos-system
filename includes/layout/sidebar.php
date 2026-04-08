@@ -20,7 +20,7 @@ require_once __DIR__ . '/../helpers/ui.php';
 
     <nav class="sidebar-nav">
         <p class="sidebar-label">Workspace</p>
-        <?php foreach (navigation_items() as $item): ?>
+        <?php foreach (visible_navigation_items() as $item): ?>
             <a class="<?= nav_item_class($currentPage, $item['key']); ?>" href="<?= htmlspecialchars($item['href'], ENT_QUOTES, 'UTF-8'); ?>">
                 <span class="nav-link__icon"><i class="bi <?= htmlspecialchars($item['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i></span>
                 <span><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8'); ?></span>
@@ -30,9 +30,11 @@ require_once __DIR__ . '/../helpers/ui.php';
 
     <div class="sidebar-card">
         <div class="sidebar-card__icon"><i class="bi bi-rocket-takeoff-fill"></i></div>
-        <h2>Step 1 Foundation</h2>
-        <p>Authentication, CRUD, and transaction logic will be connected in the next steps.</p>
+        <h2><?= current_user_role() === 'admin' ? 'Admin Access' : 'Cashier Access'; ?></h2>
+        <p>
+            Signed in as <?= htmlspecialchars(current_user_name(), ENT_QUOTES, 'UTF-8'); ?>.
+            <?= current_user_role() === 'admin' ? 'You can access management modules and reports.' : 'You can access sales and transaction workspaces.'; ?>
+        </p>
         <a href="<?= htmlspecialchars(url('README.md'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-light btn-sm">View Project Notes</a>
     </div>
 </aside>
-
