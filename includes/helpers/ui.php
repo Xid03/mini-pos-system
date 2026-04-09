@@ -14,6 +14,7 @@ function navigation_items(): array
         ['key' => 'categories', 'label' => 'Categories', 'icon' => 'bi-tags-fill', 'href' => url('modules/categories/index.php'), 'roles' => ['admin']],
         ['key' => 'products', 'label' => 'Products', 'icon' => 'bi-box-seam-fill', 'href' => url('modules/products/index.php'), 'roles' => ['admin']],
         ['key' => 'inventory', 'label' => 'Inventory', 'icon' => 'bi-archive-fill', 'href' => url('modules/inventory/index.php'), 'roles' => ['admin']],
+        ['key' => 'users', 'label' => 'Users', 'icon' => 'bi-people-fill', 'href' => url('modules/users/index.php'), 'roles' => ['admin']],
         ['key' => 'pos', 'label' => 'Point of Sale', 'icon' => 'bi-receipt-cutoff', 'href' => url('modules/pos/index.php'), 'roles' => ['admin', 'cashier']],
         ['key' => 'transactions', 'label' => 'Transactions', 'icon' => 'bi-cash-stack', 'href' => url('modules/transactions/index.php'), 'roles' => ['admin', 'cashier']],
         ['key' => 'reports', 'label' => 'Reports', 'icon' => 'bi-bar-chart-fill', 'href' => url('modules/reports/index.php'), 'roles' => ['admin']],
@@ -148,6 +149,7 @@ function module_shortcuts(): array
         ['label' => 'Manage Categories', 'href' => url('modules/categories/index.php'), 'icon' => 'bi-tags-fill', 'roles' => ['admin']],
         ['label' => 'Manage Products', 'href' => url('modules/products/index.php'), 'icon' => 'bi-box-seam-fill', 'roles' => ['admin']],
         ['label' => 'Track Inventory', 'href' => url('modules/inventory/index.php'), 'icon' => 'bi-clipboard2-data-fill', 'roles' => ['admin']],
+        ['label' => 'Manage Users', 'href' => url('modules/users/index.php'), 'icon' => 'bi-people-fill', 'roles' => ['admin']],
         ['label' => 'Open POS Module', 'href' => url('modules/pos/index.php'), 'icon' => 'bi-receipt-cutoff', 'roles' => ['admin', 'cashier']],
         ['label' => 'View Transactions', 'href' => url('modules/transactions/index.php'), 'icon' => 'bi-cash-stack', 'roles' => ['admin', 'cashier']],
     ];

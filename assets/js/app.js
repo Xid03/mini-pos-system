@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageLoaderBar = pageLoader ? pageLoader.querySelector('.page-loader__bar') : null;
     const sidebarToggle = document.querySelector('[data-sidebar-toggle]');
     const sidebarDismiss = document.querySelector('[data-sidebar-dismiss]');
+    const sidebarClose = document.querySelector('[data-sidebar-close]');
     const notificationShell = document.querySelector('[data-notification-shell]');
     const notificationToggle = document.querySelector('[data-notification-toggle]');
     const notificationPanel = document.querySelector('[data-notification-panel]');
@@ -82,6 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (sidebarDismiss) {
         sidebarDismiss.addEventListener('click', () => {
+            body.classList.remove('sidebar-open');
+        });
+    }
+
+    if (sidebarClose) {
+        sidebarClose.addEventListener('click', () => {
             body.classList.remove('sidebar-open');
         });
     }

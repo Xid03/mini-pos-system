@@ -55,6 +55,7 @@ function audit_action_options(): array
         'catalog.product.create' => 'Product Created',
         'catalog.product.update' => 'Product Updated',
         'catalog.product.delete' => 'Product Deleted',
+        'user.cashier.create' => 'Cashier Registered',
         'inventory.stock_in' => 'Stock In',
         'inventory.stock_out' => 'Stock Out',
         'pos.checkout' => 'POS Checkout',
@@ -104,4 +105,3 @@ function audit_action_label(string $action): string
 {
     return audit_action_options()[$action] ?? $action;
 }
-

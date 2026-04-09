@@ -18,11 +18,6 @@ $notificationCount = count($notifications);
     </div>
 
     <div class="topbar__right">
-        <div class="search-shell d-none d-lg-flex">
-            <i class="bi bi-search"></i>
-            <input type="text" class="form-control" placeholder="Search workspace">
-        </div>
-
         <div class="topbar-notifications" data-notification-shell>
             <button type="button" class="btn icon-button position-relative" aria-label="Notifications" aria-expanded="false" data-notification-toggle>
                 <i class="bi bi-bell-fill"></i>
