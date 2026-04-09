@@ -20,16 +20,20 @@ $pageDescription = 'Use stock in to add units to the selected product and keep i
 $submitLabel = 'Save Stock In';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    enforce_csrf_protection('modules/inventory/stock-in.php');
     [$formData, $errors] = validate_inventory_movement_input($_POST, $movementType);
 
     if ($errors === []) {
-        record_inventory_movement($formData, $movementType, current_user_id());
-        set_flash_message('success', 'Stock in recorded successfully.');
-        redirect('modules/inventory/index.php');
+        try {
+            record_inventory_movement($formData, $movementType, current_user_id());
+            set_flash_message('success', 'Stock in recorded successfully.');
+            redirect('modules/inventory/index.php');
+        } catch (Throwable) {
+            $errors['general'] = 'We could not record the stock in movement right now. Please try again.';
+        }
     }
 }
 
 require __DIR__ . '/../../includes/layout/app-shell-start.php';
 require __DIR__ . '/movement-form.php';
 require __DIR__ . '/../../includes/layout/app-shell-end.php';
-

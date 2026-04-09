@@ -18,7 +18,7 @@ $currentUserRole = ucfirst(current_user_role());
     <div class="topbar__right">
         <div class="search-shell d-none d-lg-flex">
             <i class="bi bi-search"></i>
-            <input type="text" class="form-control" placeholder="Search future modules...">
+            <input type="text" class="form-control" placeholder="Workspace search preview">
         </div>
 
         <button type="button" class="btn icon-button position-relative" aria-label="Notifications">
@@ -35,6 +35,7 @@ $currentUserRole = ucfirst(current_user_role());
         </div>
 
         <form action="<?= htmlspecialchars(url('logout.php'), ENT_QUOTES, 'UTF-8'); ?>" method="post" class="m-0">
+            <?= csrf_input(); ?>
             <button type="submit" class="btn icon-button" aria-label="Logout">
                 <i class="bi bi-box-arrow-right"></i>
             </button>

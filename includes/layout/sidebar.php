@@ -14,7 +14,7 @@ require_once __DIR__ . '/../helpers/ui.php';
         </div>
         <span class="status-chip">
             <i class="bi bi-stars"></i>
-            UI Prototype
+            Live Modules
         </span>
     </div>
 

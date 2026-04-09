@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/catalog.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/audit.php';
 
 function ensure_pos_cart(): void
 {
@@ -417,6 +418,11 @@ function complete_pos_checkout(array $cartItems, array $checkoutData, int $cashi
             'payment_method' => $checkoutData['payment_method'],
             'item_count' => count($cartItems),
         ]);
+        log_audit(
+            'pos.checkout',
+            'Completed sale ' . $invoiceNumber . ' for RM ' . number_format($totals['total_amount'], 2, '.', '') . ' using ' . $checkoutData['payment_method'] . '.',
+            $cashierId
+        );
 
         return [
             'sale_id' => $saleId,

@@ -50,6 +50,13 @@ $submitLabel = $submitLabel ?? 'Save Movement';
     </div>
 
     <form method="post" class="admin-form">
+        <?= csrf_input(); ?>
+        <?php if (isset($errors['general'])): ?>
+            <div class="alert alert-danger custom-alert" role="alert">
+                <i class="bi bi-exclamation-octagon-fill"></i>
+                <span><?= htmlspecialchars((string) $errors['general'], ENT_QUOTES, 'UTF-8'); ?></span>
+            </div>
+        <?php endif; ?>
         <div class="form-grid">
             <div class="form-group-full">
                 <label for="product_id" class="form-label">Product</label>
@@ -92,4 +99,3 @@ $submitLabel = $submitLabel ?? 'Save Movement';
         </div>
     </form>
 </section>
-

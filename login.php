@@ -10,15 +10,20 @@ $loginErrors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim((string) ($_POST['email'] ?? ''));
-    $password = (string) ($_POST['password'] ?? '');
-    $result = attempt_login($email, $password);
 
-    if (($result['success'] ?? false) === true) {
-        set_flash_message('success', 'Welcome back, ' . current_user_name() . '.');
-        redirect(user_home_path());
+    if (!verify_csrf_token($_POST['_token'] ?? null)) {
+        $loginErrors = ['Your session expired or the request token was invalid. Please refresh and try again.'];
+    } else {
+        $password = (string) ($_POST['password'] ?? '');
+        $result = attempt_login($email, $password);
+
+        if (($result['success'] ?? false) === true) {
+            set_flash_message('success', 'Welcome back, ' . current_user_name() . '.');
+            redirect(user_home_path());
+        }
+
+        $loginErrors = $result['errors'] ?? ['Unable to sign in.'];
     }
-
-    $loginErrors = $result['errors'] ?? ['Unable to sign in.'];
 }
 
 $pageTitle = 'Welcome Back';
@@ -130,9 +135,10 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
                     </div>
 
                     <form action="<?= htmlspecialchars(url('login.php'), ENT_QUOTES, 'UTF-8'); ?>" method="post" class="mt-2">
+                        <?= csrf_input(); ?>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="admin@minipos.local" autocomplete="email" value="<?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="admin@minipos.local" autocomplete="email" maxlength="120" value="<?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>">
                         </div>
 
                         <div class="mb-3">

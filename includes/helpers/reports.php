@@ -192,3 +192,70 @@ function report_month_label(string $monthStart): string
     return date('F Y', strtotime($monthStart));
 }
 
+function export_sales_rows(string $dateFrom, string $dateTo): array
+{
+    $bounds = report_range_bounds($dateFrom, $dateTo);
+    $statement = database()->prepare(
+        'SELECT
+            s.invoice_number,
+            u.full_name AS cashier_name,
+            s.payment_method,
+            item_totals.total_quantity AS units_sold,
+            s.total_amount,
+            s.paid_amount,
+            s.balance_amount,
+            s.created_at
+         FROM sales s
+         INNER JOIN users u ON u.id = s.cashier_id
+         LEFT JOIN (
+            SELECT sale_id, SUM(quantity) AS total_quantity
+            FROM sale_items
+            GROUP BY sale_id
+         ) item_totals ON item_totals.sale_id = s.id
+         WHERE s.created_at >= :start AND s.created_at < :end_exclusive
+         ORDER BY s.created_at DESC, s.id DESC'
+    );
+    $statement->execute($bounds);
+
+    return $statement->fetchAll();
+}
+
+function export_low_stock_rows(): array
+{
+    $statement = database()->query(
+        'SELECT
+            p.sku,
+            p.name,
+            c.name AS category_name,
+            p.stock_quantity,
+            p.min_stock_level,
+            p.status
+         FROM products p
+         INNER JOIN categories c ON c.id = p.category_id
+         WHERE p.stock_quantity <= p.min_stock_level
+         ORDER BY p.stock_quantity ASC, p.name ASC'
+    );
+
+    return $statement->fetchAll();
+}
+
+function stream_csv_download(string $filename, array $headers, array $rows): never
+{
+    header('Content-Type: text/csv; charset=UTF-8');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+    $output = fopen('php://output', 'wb');
+
+    if ($output === false) {
+        throw new RuntimeException('Unable to generate CSV output.');
+    }
+
+    fputcsv($output, $headers);
+
+    foreach ($rows as $row) {
+        fputcsv($output, $row);
+    }
+
+    fclose($output);
+    exit;
+}

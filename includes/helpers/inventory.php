@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/catalog.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/audit.php';
 
 function inventory_metrics(): array
 {
@@ -244,7 +245,7 @@ function record_inventory_movement(array $data, string $movementType, int $userI
 
     try {
         $productStatement = $pdo->prepare(
-            'SELECT id, stock_quantity
+            'SELECT id, name, stock_quantity
              FROM products
              WHERE id = :id
              FOR UPDATE'
@@ -289,6 +290,14 @@ function record_inventory_movement(array $data, string $movementType, int $userI
         ]);
 
         $pdo->commit();
+        $description = sprintf(
+            '%s %d unit(s) for %s.%s',
+            $movementType === 'stock_in' ? 'Added' : 'Removed',
+            $quantity,
+            (string) $product['name'],
+            $data['notes'] !== '' ? ' Note: ' . $data['notes'] : ''
+        );
+        log_audit('inventory.' . $movementType, $description, $userId);
     } catch (Throwable $throwable) {
         if ($pdo->inTransaction()) {
             $pdo->rollBack();

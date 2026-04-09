@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('modules/products/index.php');
 }
 
+enforce_csrf_protection('modules/products/index.php');
 $productId = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 
 if (!$productId) {
@@ -17,6 +18,20 @@ if (!$productId) {
     redirect('modules/products/index.php');
 }
 
-delete_product($productId);
-set_flash_message('success', 'Product deleted successfully.');
+$product = find_product($productId);
+
+if (product_has_sales_history($productId) || product_has_inventory_history($productId)) {
+    set_flash_message('error', 'Cannot delete a product that already has sales or inventory history.');
+    redirect('modules/products/index.php');
+}
+
+try {
+    delete_product($productId);
+    if ($product !== null) {
+        log_audit('catalog.product.delete', 'Deleted product "' . $product['name'] . '" with SKU ' . $product['sku'] . '.');
+    }
+    set_flash_message('success', 'Product deleted successfully.');
+} catch (Throwable) {
+    set_flash_message('error', 'We could not delete the product right now. Please try again.');
+}
 redirect('modules/products/index.php');

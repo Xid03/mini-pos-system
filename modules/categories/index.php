@@ -117,6 +117,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
                                         data-confirm-message="This will permanently remove <?= htmlspecialchars((string) $category['name'], ENT_QUOTES, 'UTF-8'); ?> if it is not assigned to any products."
                                         data-confirm-button="Delete Category"
                                     >
+                                        <?= csrf_input(); ?>
                                         <input type="hidden" name="id" value="<?= (int) $category['id']; ?>">
                                         <button type="submit" class="btn btn-outline-danger btn-sm">
                                             <i class="bi bi-trash3 me-1"></i>

@@ -38,12 +38,18 @@ $formData = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    enforce_csrf_protection('modules/products/edit.php?id=' . $productId);
     [$formData, $errors] = validate_product_input($_POST, $productId);
 
     if ($errors === []) {
-        update_product($productId, $formData);
-        set_flash_message('success', 'Product updated successfully.');
-        redirect('modules/products/index.php');
+        try {
+            update_product($productId, $formData);
+            log_audit('catalog.product.update', 'Updated product "' . $formData['name'] . '" with SKU ' . $formData['sku'] . '.');
+            set_flash_message('success', 'Product updated successfully.');
+            redirect('modules/products/index.php');
+        } catch (Throwable) {
+            $errors['general'] = 'We could not update the product right now. Please try again.';
+        }
     }
 }
 
@@ -52,4 +58,3 @@ $submitLabel = 'Update Product';
 $isEditMode = true;
 require __DIR__ . '/form.php';
 require __DIR__ . '/../../includes/layout/app-shell-end.php';
-

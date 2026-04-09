@@ -30,12 +30,18 @@ $formData = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    enforce_csrf_protection('modules/categories/edit.php?id=' . $categoryId);
     [$formData, $errors] = validate_category_input($_POST, $categoryId);
 
     if ($errors === []) {
-        update_category($categoryId, $formData);
-        set_flash_message('success', 'Category updated successfully.');
-        redirect('modules/categories/index.php');
+        try {
+            update_category($categoryId, $formData);
+            log_audit('catalog.category.update', 'Updated category "' . $formData['name'] . '".');
+            set_flash_message('success', 'Category updated successfully.');
+            redirect('modules/categories/index.php');
+        } catch (Throwable) {
+            $errors['general'] = 'We could not update the category right now. Please try again.';
+        }
     }
 }
 
@@ -44,4 +50,3 @@ $submitLabel = 'Update Category';
 $isEditMode = true;
 require __DIR__ . '/form.php';
 require __DIR__ . '/../../includes/layout/app-shell-end.php';
-

@@ -45,6 +45,13 @@ $isEditMode = $isEditMode ?? false;
     </div>
 
     <form method="post" class="admin-form">
+        <?= csrf_input(); ?>
+        <?php if (isset($errors['general'])): ?>
+            <div class="alert alert-danger custom-alert" role="alert">
+                <i class="bi bi-exclamation-octagon-fill"></i>
+                <span><?= htmlspecialchars((string) $errors['general'], ENT_QUOTES, 'UTF-8'); ?></span>
+            </div>
+        <?php endif; ?>
         <div class="form-grid">
             <div class="form-group-full">
                 <label for="name" class="form-label">Category Name</label>
@@ -87,4 +94,3 @@ $isEditMode = $isEditMode ?? false;
         </div>
     </form>
 </section>
-

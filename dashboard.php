@@ -25,8 +25,8 @@ require __DIR__ . '/includes/layout/app-shell-start.php';
         </span>
         <h3>Clean, modern POS operations designed for real-world portfolio storytelling.</h3>
         <p>
-            Step 2 now includes real authentication and role checks. Admin users can access management modules and reports,
-            while cashier users stay focused on sales and transaction workflows inside the same shared layout system.
+            This dashboard now sits on top of the completed authentication, catalog, inventory, POS, transaction,
+            reporting, and audit modules. Admin users can oversee the business workflow while cashiers stay focused on sales.
         </p>
         <div class="hero-actions">
             <a href="<?= htmlspecialchars(url('modules/pos/index.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary">
@@ -70,73 +70,76 @@ require __DIR__ . '/includes/layout/app-shell-start.php';
     <article class="section-card glass-card table-shell">
         <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
             <div>
-                <h3 class="section-title">Recent Activity Preview</h3>
-                <p class="section-subtitle">Sample sales activity table for the future transaction module.</p>
+                <h3 class="section-title">Recent Sales Activity</h3>
+                <p class="section-subtitle">Latest completed sales captured by the POS module.</p>
             </div>
             <span class="badge-soft-success">
                 <i class="bi bi-check2-circle"></i>
-                Prepared for Step 5 and Step 6
+                Live transaction data
             </span>
         </div>
-
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>Invoice</th>
-                        <th>Cashier</th>
-                        <th>Items</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($recentActivities as $activity): ?>
+        <?php if ($recentActivities === []): ?>
+            <div class="empty-state empty-state--compact">
+                <div class="empty-state__icon"><i class="bi bi-receipt-cutoff"></i></div>
+                <h4>No recent sales yet</h4>
+                <p>Complete a sale from the POS page to populate this dashboard activity section.</p>
+            </div>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
                         <tr>
-                            <td><strong><?= htmlspecialchars($activity['invoice'], ENT_QUOTES, 'UTF-8'); ?></strong></td>
-                            <td><?= htmlspecialchars($activity['cashier'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?= htmlspecialchars($activity['items'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?= htmlspecialchars($activity['amount'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td>
-                                <?php $statusClass = match ($activity['status']) {
-                                    'Paid' => 'badge-soft-success',
-                                    'Printed' => 'badge-soft-info',
-                                    default => 'badge-soft-warning',
-                                }; ?>
-                                <span class="<?= $statusClass; ?>"><?= htmlspecialchars($activity['status'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            </td>
+                            <th>Invoice</th>
+                            <th>Cashier</th>
+                            <th>Items</th>
+                            <th>Amount</th>
+                            <th>Payment</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="coming-soon-note">
-            Step 1 uses static preview data only. Database-backed transaction lists, receipts, and detailed views will be introduced after the POS transaction flow is built.
-        </div>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($recentActivities as $activity): ?>
+                            <tr>
+                                <td><strong><?= htmlspecialchars($activity['invoice'], ENT_QUOTES, 'UTF-8'); ?></strong></td>
+                                <td><?= htmlspecialchars($activity['cashier'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?= htmlspecialchars($activity['items'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?= htmlspecialchars($activity['amount'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><span class="badge-soft-success"><?= htmlspecialchars($activity['status'], ENT_QUOTES, 'UTF-8'); ?></span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
     </article>
 
     <div class="d-flex flex-column gap-3">
         <article class="section-card glass-card">
             <div class="mb-3">
-                <h3 class="section-title">Low Stock Preview</h3>
-                <p class="section-subtitle">A visual target for the inventory alert experience.</p>
+                <h3 class="section-title">Low Stock Watch</h3>
+                <p class="section-subtitle">Products currently at or below their minimum stock level.</p>
             </div>
-
-            <div class="inventory-list">
-                <?php foreach ($lowStockItems as $item): ?>
-                    <div class="inventory-item">
-                        <div class="inventory-item__top">
-                            <div>
-                                <h4><?= htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8'); ?></h4>
-                                <small><?= htmlspecialchars($item['sku'], ENT_QUOTES, 'UTF-8'); ?></small>
+            <?php if ($lowStockItems === []): ?>
+                <div class="empty-state empty-state--compact">
+                    <div class="empty-state__icon"><i class="bi bi-check2-circle"></i></div>
+                    <h4>No low-stock alerts</h4>
+                    <p>Inventory is currently above the configured minimum thresholds.</p>
+                </div>
+            <?php else: ?>
+                <div class="inventory-list">
+                    <?php foreach ($lowStockItems as $item): ?>
+                        <div class="inventory-item">
+                            <div class="inventory-item__top">
+                                <div>
+                                    <h4><?= htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8'); ?></h4>
+                                    <small><?= htmlspecialchars($item['sku'], ENT_QUOTES, 'UTF-8'); ?></small>
+                                </div>
+                                <span class="badge-soft-warning">Qty <?= (int) $item['qty']; ?></span>
                             </div>
-                            <span class="badge-soft-warning">Qty <?= (int) $item['qty']; ?></span>
+                            <p>Reorder soon to avoid blocking POS sales and transaction fulfillment.</p>
                         </div>
-                        <p>Reorder soon to avoid blocking POS sales and transaction fulfillment.</p>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </article>
 
         <article class="section-card glass-card">
@@ -153,7 +156,7 @@ require __DIR__ . '/includes/layout/app-shell-start.php';
                         </div>
                         <div>
                             <h4><?= htmlspecialchars($shortcut['label'], ENT_QUOTES, 'UTF-8'); ?></h4>
-                            <p>Scaffolded in the project structure for the next build steps.</p>
+                            <p>Jump directly into the working module from the main dashboard.</p>
                         </div>
                     </a>
                 <?php endforeach; ?>

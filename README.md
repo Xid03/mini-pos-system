@@ -1,21 +1,27 @@
 # Mini POS System
 
-Mini POS System is a portfolio-ready PHP and MySQL project focused on realistic point of sale and inventory workflows. The goal is to keep the codebase simple enough for interviews and shared hosting deployment while still demonstrating practical software engineering skills such as modular structure, UI consistency, authentication, CRUD, stock control, reporting, testing, and documentation.
+Mini POS System is a portfolio-ready `PHP + MySQL` project for a realistic small retail workflow. It demonstrates authentication, role-based access, category and product CRUD, inventory tracking, POS transactions, printable receipts, reporting, audit logging, CSV export, testing flow, and shared-hosting-friendly deployment.
 
-## Step 2 Status
+## Project Goals
 
-Step 2 adds the backend foundation for authentication and role-based access:
+- keep the code understandable for a junior developer interview
+- use plain PHP with reusable includes instead of a heavy framework
+- demonstrate realistic business logic for POS and inventory workflows
+- stay suitable for shared hosting or cPanel deployment
+- present a polished admin dashboard UI, not a plain classroom demo
 
-- project folder structure aligned for future POS, inventory, and reporting modules
-- shared PHP layout includes for reusable head, sidebar, topbar, auth shell, and dashboard shell
-- design system with Bootstrap plus custom CSS variables, cards, forms, tables, badges, and responsive dashboard styling
-- MySQL schema for users, categories, products, inventory movements, sales, sale items, and audit logs
-- PDO database connection setup with prepared statements
-- login authentication with PHP sessions
-- role-based access for `admin` and `cashier`
-- logout flow
+## Main Features
 
-CRUD, inventory operations, POS transactions, and reports are still scheduled for later steps.
+- admin and cashier authentication with role-based access
+- category CRUD
+- product CRUD
+- inventory stock in, stock out, and movement history
+- POS cart, checkout, stock deduction, and insufficient stock protection
+- transaction history, transaction detail view, and printable receipt
+- daily sales, monthly summary, top-selling products, and low-stock reports
+- audit log for key system actions
+- CSV export for sales and low-stock reports
+- CSRF protection and basic login rate limiting
 
 ## Tech Stack
 
@@ -26,38 +32,42 @@ CRUD, inventory operations, POS transactions, and reports are still scheduled fo
 - Bootstrap 5
 - JavaScript
 
-## Proposed Project Structure
+## Project Structure
 
 ```text
 MiniPostSystem/
 |-- assets/
 |   |-- css/
 |   |   `-- app.css
-|   |-- images/
 |   `-- js/
 |       `-- app.js
 |-- database/
 |   |-- schema/
+|   |   `-- minipos_system.sql
 |   `-- seeds/
+|       |-- step2_sample_users.sql
+|       `-- step9_sample_data.sql
 |-- docs/
+|   |-- manual-testing-checklist.md
 |   `-- screenshots/
 |-- includes/
 |   |-- config/
-|   |   `-- app.php
+|   |   |-- app.php
+|   |   |-- database.php
+|   |   `-- database.local.example.php
 |   |-- helpers/
+|   |   |-- audit.php
+|   |   |-- auth.php
+|   |   |-- catalog.php
+|   |   |-- inventory.php
+|   |   |-- pos.php
+|   |   |-- reports.php
+|   |   |-- security.php
+|   |   |-- transactions.php
 |   |   `-- ui.php
 |   `-- layout/
-|       |-- app-shell-end.php
-|       |-- app-shell-start.php
-|       |-- auth-shell-end.php
-|       |-- auth-shell-start.php
-|       |-- head.php
-|       |-- sidebar.php
-|       `-- topbar.php
 |-- modules/
 |   |-- categories/
-|   |-- dashboard/
-|   |   `-- index.php
 |   |-- inventory/
 |   |-- pos/
 |   |-- products/
@@ -66,29 +76,13 @@ MiniPostSystem/
 |-- dashboard.php
 |-- index.php
 |-- login.php
+|-- logout.php
 `-- README.md
 ```
 
-## UI Direction
+## Demo Accounts
 
-The interface is designed to feel like a modern admin dashboard instead of a basic school project:
-
-- clean spacing and soft glassmorphism-inspired surfaces
-- strong card and table hierarchy
-- reusable badges and button styles
-- responsive sidebar and topbar layout
-- polished POS-friendly visual system ready for future modules
-
-## Database Setup
-
-1. Create a MySQL database named `mini_pos_system`
-2. Import:
-   - `database/schema/minipos_system.sql`
-   - `database/seeds/step2_sample_users.sql`
-3. Copy `includes/config/database.local.example.php` to `includes/config/database.local.php`
-4. Update the MySQL credentials in `includes/config/database.local.php`
-
-### Demo Accounts
+Import the user seed, then use:
 
 - Admin
   - email: `admin@minipos.local`
@@ -97,22 +91,215 @@ The interface is designed to feel like a modern admin dashboard instead of a bas
   - email: `cashier@minipos.local`
   - password: `Cashier@123`
 
-## Local Preview
+## Local Setup
 
-Use a local PHP server or XAMPP/Laragon and open the project in your browser.
+### Recommended local environment
 
-```bash
-php -S localhost:8000
+- `Laragon` on Windows for PHP and MySQL
+- or `XAMPP` if you prefer a more beginner-oriented stack
+
+### 1. Create the database
+
+Create a MySQL database named:
+
+```text
+mini_pos_system
 ```
 
-Then visit `http://localhost:8000/login.php`
+### 2. Import SQL files
 
-## Planned Build Roadmap
+Import in this order:
 
-- Step 3: categories and products CRUD
-- Step 4: inventory management
-- Step 5: POS transactions
-- Step 6: receipt and transaction history
-- Step 7: reports
-- Step 8: audit log, backup/export, validation and security hardening
-- Step 9: final polish, sample data, full documentation, deployment notes
+1. `database/schema/minipos_system.sql`
+2. `database/seeds/step2_sample_users.sql`
+3. `database/seeds/step9_sample_data.sql`
+
+The Step 9 sample data file adds categories, products, inventory movements, and sample sales so reports and dashboards are easier to demo.
+
+### 3. Create local database config
+
+Copy:
+
+```text
+includes/config/database.local.example.php
+```
+
+to:
+
+```text
+includes/config/database.local.php
+```
+
+Then update the values for:
+
+- host
+- port
+- database
+- username
+- password
+
+Example Laragon local config:
+
+```php
+<?php
+declare(strict_types=1);
+
+return [
+    'host' => '127.0.0.1',
+    'port' => '3306',
+    'database' => 'mini_pos_system',
+    'username' => 'root',
+    'password' => '',
+    'charset' => 'utf8mb4',
+];
+```
+
+### 4. Run the app
+
+If you use Laragon, run with Laragon PHP:
+
+```powershell
+cd C:\Xid\UiTM\Portfolio\MiniPostSystem
+C:\laragon\bin\php\php-8.3.30-Win32-vs16-x64\php.exe -S localhost:8000
+```
+
+Then open:
+
+- `http://localhost:8000/login.php`
+
+## Module Overview
+
+### Authentication
+
+- login with admin or cashier role
+- logout flow
+- session-based access control
+- basic login rate limiting
+
+### Categories
+
+- create, edit, search, and delete categories
+- duplicate name validation
+- prevent deleting categories that still contain products
+
+### Products
+
+- create, edit, search, filter, and delete products
+- category assignment
+- SKU uniqueness
+- price and stock validation
+- prevent deleting products that already have sales or inventory history
+
+### Inventory
+
+- stock in
+- stock out
+- movement history
+- low-stock indicators
+
+### POS
+
+- product search
+- add to cart
+- update quantities
+- payment and balance calculation
+- save sale
+- deduct stock
+- prevent insufficient-stock checkout
+
+### Transactions
+
+- transaction history
+- transaction detail page
+- printable receipt page
+
+### Reports
+
+- daily sales
+- monthly summary
+- top-selling products
+- low-stock products
+- CSV export for sales and low-stock reports
+
+### Audit and Security
+
+- audit log for key actions
+- CSRF protection on POST forms
+- prepared statements with PDO
+
+## Manual Testing
+
+See:
+
+- [docs/manual-testing-checklist.md](docs/manual-testing-checklist.md)
+
+## Portfolio Notes
+
+This project is intentionally designed as an internal business system:
+
+- there is no public registration page
+- staff accounts are seeded or managed by the business/admin
+- admin and cashier roles reflect a more realistic POS setup
+
+If expanded later, a good next feature would be an admin-only user management module for creating cashier accounts.
+
+## Git Workflow
+
+Typical commands:
+
+```powershell
+git status
+git add .
+git commit -m "Your commit message"
+git push origin main
+```
+
+## Shared Hosting / cPanel Deployment Notes
+
+This project is intentionally structured to be easy to move onto basic PHP hosting.
+
+### Deployment checklist
+
+1. Upload the project files to your hosting account
+2. Create a MySQL database in cPanel
+3. Create a MySQL user and assign it to the database
+4. Import:
+   - `database/schema/minipos_system.sql`
+   - `database/seeds/step2_sample_users.sql`
+   - optionally `database/seeds/step9_sample_data.sql`
+5. Create `includes/config/database.local.php` on the server with the hosting database credentials
+6. Make sure the domain or subfolder points to this project directory
+7. Test login, POS, transactions, reports, and logout
+
+### cPanel tips
+
+- if the app is deployed inside a subfolder, adjust `BASE_URL` in `includes/config/app.php` if needed
+- keep `database.local.php` out of version control
+- use production database credentials, not local defaults
+- if your host provides a newer PHP version selector, use PHP 8.x
+- verify `pdo_mysql` is enabled on the host
+
+## Suggested Screenshots For Portfolio
+
+- login page
+- dashboard
+- product management page
+- inventory page
+- POS page with cart
+- transaction detail page
+- reports page
+- audit log page
+
+## Current Status
+
+This project now includes the full Step 1 to Step 9 roadmap:
+
+- UI foundation
+- authentication and role access
+- category and product CRUD
+- inventory management
+- POS transactions
+- receipt and transaction history
+- reports
+- audit, export, and security improvements
+- final polish, sample data, testing notes, and deployment guidance

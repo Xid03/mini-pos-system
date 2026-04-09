@@ -350,6 +350,22 @@ function delete_product(int $id): void
     $statement->execute(['id' => $id]);
 }
 
+function product_has_inventory_history(int $id): bool
+{
+    $statement = database()->prepare('SELECT COUNT(*) FROM inventory_movements WHERE product_id = :id');
+    $statement->execute(['id' => $id]);
+
+    return (int) $statement->fetchColumn() > 0;
+}
+
+function product_has_sales_history(int $id): bool
+{
+    $statement = database()->prepare('SELECT COUNT(*) FROM sale_items WHERE product_id = :id');
+    $statement->execute(['id' => $id]);
+
+    return (int) $statement->fetchColumn() > 0;
+}
+
 function find_product(int $id): ?array
 {
     $statement = database()->prepare(

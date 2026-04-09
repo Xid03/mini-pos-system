@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/audit.php';
 
 function ensure_session_started(): void
 {
@@ -12,6 +13,7 @@ function ensure_session_started(): void
     session_name('mini_pos_session');
     session_start([
         'cookie_httponly' => true,
+        'cookie_secure' => is_https_request(),
         'cookie_samesite' => 'Lax',
         'use_strict_mode' => true,
     ]);
@@ -70,6 +72,70 @@ function current_user_role(): string
 {
     $user = current_user();
     return $user['role'] ?? 'guest';
+}
+
+function login_rate_limit_window(): int
+{
+    return 300;
+}
+
+function login_rate_limit_max_attempts(): int
+{
+    return 5;
+}
+
+function failed_login_attempt_state(): array
+{
+    ensure_session_started();
+
+    if (!isset($_SESSION['login_attempts']) || !is_array($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = [
+            'count' => 0,
+            'first_attempt_at' => time(),
+        ];
+    }
+
+    $state = $_SESSION['login_attempts'];
+    $firstAttemptAt = isset($state['first_attempt_at']) ? (int) $state['first_attempt_at'] : time();
+
+    if ((time() - $firstAttemptAt) > login_rate_limit_window()) {
+        clear_failed_login_attempts();
+        return failed_login_attempt_state();
+    }
+
+    return [
+        'count' => isset($state['count']) ? (int) $state['count'] : 0,
+        'first_attempt_at' => $firstAttemptAt,
+    ];
+}
+
+function clear_failed_login_attempts(): void
+{
+    ensure_session_started();
+    unset($_SESSION['login_attempts']);
+}
+
+function register_failed_login_attempt(): void
+{
+    ensure_session_started();
+    $state = failed_login_attempt_state();
+    $_SESSION['login_attempts'] = [
+        'count' => $state['count'] + 1,
+        'first_attempt_at' => $state['first_attempt_at'],
+    ];
+}
+
+function login_is_temporarily_locked(): bool
+{
+    $state = failed_login_attempt_state();
+    return $state['count'] >= login_rate_limit_max_attempts();
+}
+
+function remaining_login_lock_seconds(): int
+{
+    $state = failed_login_attempt_state();
+    $expiresAt = $state['first_attempt_at'] + login_rate_limit_window();
+    return max(0, $expiresAt - time());
 }
 
 function user_home_path(): string
@@ -149,6 +215,8 @@ function login_user(array $user): void
     ];
 
     update_last_login((int) $user['id']);
+    clear_failed_login_attempts();
+    log_audit('auth.login', 'Signed in to the system.', (int) $user['id']);
 }
 
 function attempt_login(string $email, string $password): array
@@ -158,6 +226,8 @@ function attempt_login(string $email, string $password): array
 
     if ($email === '') {
         $errors[] = 'Email address is required.';
+    } elseif (mb_strlen($email) > 120 || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        $errors[] = 'Please enter a valid email address.';
     }
 
     if ($password === '') {
@@ -166,6 +236,16 @@ function attempt_login(string $email, string $password): array
 
     if ($errors !== []) {
         return ['success' => false, 'errors' => $errors];
+    }
+
+    if (login_is_temporarily_locked()) {
+        $remainingSeconds = remaining_login_lock_seconds();
+        $minutes = (int) ceil($remainingSeconds / 60);
+
+        return [
+            'success' => false,
+            'errors' => ['Too many failed login attempts. Please wait about ' . max(1, $minutes) . ' minute(s) before trying again.'],
+        ];
     }
 
     try {
@@ -178,10 +258,12 @@ function attempt_login(string $email, string $password): array
     }
 
     if ($user === null || !password_verify($password, (string) $user['password_hash'])) {
+        register_failed_login_attempt();
         return ['success' => false, 'errors' => ['Invalid email or password.']];
     }
 
     if (($user['status'] ?? '') !== 'active') {
+        register_failed_login_attempt();
         return ['success' => false, 'errors' => ['This account is inactive.']];
     }
 

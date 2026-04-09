@@ -16,6 +16,15 @@ $monthlySummary = fetch_monthly_sales_summary($filters['year']);
 $topProducts = fetch_top_selling_products_report($filters['date_from'], $filters['date_to'], 5);
 $lowStockProducts = fetch_low_stock_report(6);
 $topUnitsSold = $topProducts === [] ? 0 : (int) $topProducts[0]['units_sold'];
+$salesExportUrl = url('modules/reports/export.php?' . http_build_query([
+    'type' => 'sales',
+    'date_from' => $filters['date_from'],
+    'date_to' => $filters['date_to'],
+    'year' => $filters['year'],
+]));
+$lowStockExportUrl = url('modules/reports/export.php?' . http_build_query([
+    'type' => 'low-stock',
+]));
 
 require __DIR__ . '/../../includes/layout/app-shell-start.php';
 ?>
@@ -34,6 +43,10 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
             <a href="<?= htmlspecialchars(url('modules/transactions/index.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary">
                 <i class="bi bi-cash-stack me-2"></i>
                 Review Transactions
+            </a>
+            <a href="<?= htmlspecialchars(url('modules/reports/audit-log.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-soft">
+                <i class="bi bi-shield-check me-2"></i>
+                Audit Log
             </a>
             <a href="<?= htmlspecialchars(url('modules/inventory/index.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-light">
                 <i class="bi bi-archive-fill me-2"></i>
@@ -104,10 +117,16 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
                 <h3 class="section-title">Daily Sales</h3>
                 <p class="section-subtitle">Completed sales grouped by day for the selected range.</p>
             </div>
-            <span class="badge-soft-info">
-                <i class="bi bi-calendar-week"></i>
-                <?= count($dailySales); ?> day(s)
-            </span>
+            <div class="table-actions">
+                <span class="badge-soft-info">
+                    <i class="bi bi-calendar-week"></i>
+                    <?= count($dailySales); ?> day(s)
+                </span>
+                <a href="<?= htmlspecialchars($salesExportUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-light btn-sm">
+                    <i class="bi bi-download me-1"></i>
+                    Export CSV
+                </a>
+            </div>
         </div>
 
         <?php if ($dailySales === []): ?>
@@ -242,10 +261,16 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
                 <h3 class="section-title">Low-Stock Products</h3>
                 <p class="section-subtitle">Items that need attention before they affect the sales floor.</p>
             </div>
-            <a href="<?= htmlspecialchars(url('modules/inventory/index.php?stock=low'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-light btn-sm">
-                <i class="bi bi-arrow-right-circle me-1"></i>
-                Inventory
-            </a>
+            <div class="table-actions">
+                <a href="<?= htmlspecialchars($lowStockExportUrl, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-light btn-sm">
+                    <i class="bi bi-download me-1"></i>
+                    Export CSV
+                </a>
+                <a href="<?= htmlspecialchars(url('modules/inventory/index.php?stock=low'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-soft btn-sm">
+                    <i class="bi bi-arrow-right-circle me-1"></i>
+                    Inventory
+                </a>
+            </div>
         </div>
 
         <?php if ($lowStockProducts === []): ?>

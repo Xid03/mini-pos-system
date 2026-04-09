@@ -146,6 +146,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
                                         data-confirm-message="This will permanently remove <?= htmlspecialchars((string) $product['name'], ENT_QUOTES, 'UTF-8'); ?> from the catalog."
                                         data-confirm-button="Delete Product"
                                     >
+                                        <?= csrf_input(); ?>
                                         <input type="hidden" name="id" value="<?= (int) $product['id']; ?>">
                                         <button type="submit" class="btn btn-outline-danger btn-sm">
                                             <i class="bi bi-trash3 me-1"></i>

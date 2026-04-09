@@ -15,6 +15,7 @@ $checkoutErrors = [];
 $checkoutValidation = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    enforce_csrf_protection('modules/pos/index.php');
     $action = trim((string) ($_POST['action'] ?? ''));
 
     if ($action === 'add-item') {
@@ -212,6 +213,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
                             </div>
                         </div>
                         <form method="post" class="pos-add-form">
+                            <?= csrf_input(); ?>
                             <input type="hidden" name="action" value="add-item">
                             <input type="hidden" name="product_id" value="<?= (int) $product['id']; ?>">
                             <input type="number" name="quantity" class="form-control" min="1" max="<?= $availableStock; ?>" value="1" <?= $isOutOfStock ? 'disabled' : ''; ?>>
@@ -240,6 +242,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
                     data-confirm-message="This will remove all items currently queued in the POS cart."
                     data-confirm-button="Clear Cart"
                 >
+                    <?= csrf_input(); ?>
                     <input type="hidden" name="action" value="clear-cart">
                     <button type="submit" class="btn btn-light btn-sm">Clear Cart</button>
                 </form>
@@ -261,6 +264,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
             </div>
         <?php else: ?>
             <form method="post" class="admin-form">
+                <?= csrf_input(); ?>
                 <input type="hidden" name="action" value="update-cart">
                 <div class="pos-cart-list">
                     <?php foreach ($cartItems as $item): ?>
@@ -323,6 +327,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
             </div>
 
             <form method="post" class="admin-form pos-checkout-form" data-pos-checkout data-total-amount="<?= htmlspecialchars(number_format($totals['total_amount'], 2, '.', ''), ENT_QUOTES, 'UTF-8'); ?>">
+                <?= csrf_input(); ?>
                 <input type="hidden" name="action" value="checkout">
                 <div class="form-grid">
                     <div>
