@@ -60,6 +60,12 @@ function current_user_name(): string
     return $user['full_name'] ?? 'Guest User';
 }
 
+function current_user_id(): int
+{
+    $user = current_user();
+    return isset($user['id']) ? (int) $user['id'] : 0;
+}
+
 function current_user_role(): string
 {
     $user = current_user();
@@ -196,4 +202,3 @@ function logout_user(): void
 
     session_destroy();
 }
-

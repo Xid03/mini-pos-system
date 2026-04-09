@@ -21,4 +21,6 @@ $bodyClass = $bodyClass ?? '';
     <link href="<?= htmlspecialchars(url('assets/css/app.css'), ENT_QUOTES, 'UTF-8'); ?>" rel="stylesheet">
 </head>
 <body class="<?= htmlspecialchars($bodyClass, ENT_QUOTES, 'UTF-8'); ?>">
-
+<div class="page-loader" data-page-loader aria-hidden="true">
+    <span class="page-loader__bar"></span>
+</div>
