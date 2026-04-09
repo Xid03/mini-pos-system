@@ -196,7 +196,7 @@ function update_last_login(int $userId): void
 {
     $statement = database()->prepare(
         'UPDATE users
-         SET last_login_at = NOW()
+         SET last_login_at = CURRENT_TIMESTAMP
          WHERE id = :id'
     );
     $statement->execute(['id' => $userId]);
@@ -253,7 +253,7 @@ function attempt_login(string $email, string $password): array
     } catch (RuntimeException) {
         return [
             'success' => false,
-            'errors' => ['The database connection is not ready yet. Import the SQL files and update your database.local.php first.'],
+            'errors' => ['The database connection is not ready yet. Import the SQL files and update your database settings first.'],
         ];
     }
 

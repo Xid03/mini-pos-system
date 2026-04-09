@@ -31,7 +31,7 @@ function audit_log_metrics(): array
     $statement = database()->query(
         'SELECT
             COUNT(*) AS total_events,
-            SUM(CASE WHEN DATE(created_at) = CURDATE() THEN 1 ELSE 0 END) AS today_events,
+            SUM(CASE WHEN DATE(created_at) = CURRENT_DATE THEN 1 ELSE 0 END) AS today_events,
             COUNT(DISTINCT user_id) AS active_users
          FROM audit_logs'
     );
@@ -78,7 +78,7 @@ function fetch_audit_logs(string $search = '', string $action = ''): array
 
     if ($search !== '') {
         $searchTerm = '%' . $search . '%';
-        $conditions[] = '(u.full_name LIKE :search_user OR al.action LIKE :search_action OR al.description LIKE :search_description)';
+        $conditions[] = '(LOWER(u.full_name) LIKE LOWER(:search_user) OR LOWER(al.action) LIKE LOWER(:search_action) OR LOWER(al.description) LIKE LOWER(:search_description))';
         $params['search_user'] = $searchTerm;
         $params['search_action'] = $searchTerm;
         $params['search_description'] = $searchTerm;

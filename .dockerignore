@@ -1,0 +1,6 @@
+.git
+.gitignore
+docs/screenshots
+node_modules
+vendor
+.github

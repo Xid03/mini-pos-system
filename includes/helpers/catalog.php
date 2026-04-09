@@ -59,7 +59,23 @@ function category_name_exists(string $name, ?int $ignoreId = null): bool
 
 function create_category(array $data): int
 {
-    $statement = database()->prepare(
+    $pdo = database();
+
+    if (database_is_pgsql()) {
+        $statement = $pdo->prepare(
+            'INSERT INTO categories (name, description)
+             VALUES (:name, :description)
+             RETURNING id'
+        );
+        $statement->execute([
+            'name' => $data['name'],
+            'description' => $data['description'] !== '' ? $data['description'] : null,
+        ]);
+
+        return (int) $statement->fetchColumn();
+    }
+
+    $statement = $pdo->prepare(
         'INSERT INTO categories (name, description)
          VALUES (:name, :description)'
     );
@@ -68,7 +84,7 @@ function create_category(array $data): int
         'description' => $data['description'] !== '' ? $data['description'] : null,
     ]);
 
-    return (int) database()->lastInsertId();
+    return (int) $pdo->lastInsertId();
 }
 
 function update_category(int $id, array $data): void
@@ -122,7 +138,7 @@ function fetch_categories(string $search = ''): array
     $params = [];
 
     if ($search !== '') {
-        $sql .= ' WHERE c.name LIKE :search_name OR c.description LIKE :search_description';
+        $sql .= ' WHERE LOWER(c.name) LIKE LOWER(:search_name) OR LOWER(c.description) LIKE LOWER(:search_description)';
         $searchTerm = '%' . $search . '%';
         $params['search_name'] = $searchTerm;
         $params['search_description'] = $searchTerm;
@@ -293,7 +309,33 @@ function product_sku_exists(string $sku, ?int $ignoreId = null): bool
 
 function create_product(array $data): int
 {
-    $statement = database()->prepare(
+    $pdo = database();
+
+    if (database_is_pgsql()) {
+        $statement = $pdo->prepare(
+            'INSERT INTO products (
+                category_id, sku, name, description, unit_price, cost_price, stock_quantity, min_stock_level, status
+             ) VALUES (
+                :category_id, :sku, :name, :description, :unit_price, :cost_price, :stock_quantity, :min_stock_level, :status
+             )
+             RETURNING id'
+        );
+        $statement->execute([
+            'category_id' => $data['category_id'],
+            'sku' => $data['sku'],
+            'name' => $data['name'],
+            'description' => $data['description'] !== '' ? $data['description'] : null,
+            'unit_price' => $data['unit_price'],
+            'cost_price' => $data['cost_price'],
+            'stock_quantity' => $data['stock_quantity'],
+            'min_stock_level' => $data['min_stock_level'],
+            'status' => $data['status'],
+        ]);
+
+        return (int) $statement->fetchColumn();
+    }
+
+    $statement = $pdo->prepare(
         'INSERT INTO products (
             category_id, sku, name, description, unit_price, cost_price, stock_quantity, min_stock_level, status
          ) VALUES (
@@ -312,7 +354,7 @@ function create_product(array $data): int
         'status' => $data['status'],
     ]);
 
-    return (int) database()->lastInsertId();
+    return (int) $pdo->lastInsertId();
 }
 
 function update_product(int $id, array $data): void
@@ -398,7 +440,7 @@ function fetch_products(string $search = '', string $status = ''): array
     $params = [];
 
     if ($search !== '') {
-        $conditions[] = '(p.name LIKE :search_name OR p.sku LIKE :search_sku OR c.name LIKE :search_category)';
+        $conditions[] = '(LOWER(p.name) LIKE LOWER(:search_name) OR LOWER(p.sku) LIKE LOWER(:search_sku) OR LOWER(c.name) LIKE LOWER(:search_category))';
         $searchTerm = '%' . $search . '%';
         $params['search_name'] = $searchTerm;
         $params['search_sku'] = $searchTerm;
@@ -427,7 +469,7 @@ function product_metrics(): array
     $statement = database()->query(
         'SELECT
             COUNT(*) AS total_products,
-            SUM(CASE WHEN status = "active" THEN 1 ELSE 0 END) AS active_products,
+            SUM(CASE WHEN status = \'active\' THEN 1 ELSE 0 END) AS active_products,
             SUM(CASE WHEN stock_quantity <= min_stock_level THEN 1 ELSE 0 END) AS low_stock_products
          FROM products'
     );

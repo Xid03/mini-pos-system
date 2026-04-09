@@ -40,7 +40,7 @@ function fetch_transactions(string $search = '', string $paymentMethod = ''): ar
     $params = [];
 
     if ($search !== '') {
-        $conditions[] = '(s.invoice_number LIKE :search_invoice OR u.full_name LIKE :search_cashier)';
+        $conditions[] = '(LOWER(s.invoice_number) LIKE LOWER(:search_invoice) OR LOWER(u.full_name) LIKE LOWER(:search_cashier))';
         $searchTerm = '%' . $search . '%';
         $params['search_invoice'] = $searchTerm;
         $params['search_cashier'] = $searchTerm;
@@ -134,4 +134,3 @@ function payment_method_label(string $paymentMethod): string
         default => ucfirst($paymentMethod),
     };
 }
-

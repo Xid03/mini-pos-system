@@ -43,7 +43,7 @@ function fetch_inventory_products(string $search = '', string $stockFilter = '')
     $params = [];
 
     if ($search !== '') {
-        $conditions[] = '(p.name LIKE :search_name OR p.sku LIKE :search_sku OR c.name LIKE :search_category)';
+        $conditions[] = '(LOWER(p.name) LIKE LOWER(:search_name) OR LOWER(p.sku) LIKE LOWER(:search_sku) OR LOWER(c.name) LIKE LOWER(:search_category))';
         $searchTerm = '%' . $search . '%';
         $params['search_name'] = $searchTerm;
         $params['search_sku'] = $searchTerm;
@@ -104,8 +104,8 @@ function inventory_history_metrics(): array
     $statement = database()->query(
         'SELECT
             COUNT(*) AS total_movements,
-            SUM(CASE WHEN movement_type = "stock_in" THEN quantity ELSE 0 END) AS stock_in_units,
-            SUM(CASE WHEN movement_type = "stock_out" THEN quantity ELSE 0 END) AS stock_out_units
+            SUM(CASE WHEN movement_type = \'stock_in\' THEN quantity ELSE 0 END) AS stock_in_units,
+            SUM(CASE WHEN movement_type = \'stock_out\' THEN quantity ELSE 0 END) AS stock_out_units
          FROM inventory_movements'
     );
     $result = $statement->fetch();
@@ -135,7 +135,7 @@ function fetch_inventory_history(string $search = '', string $movementType = '')
     $params = [];
 
     if ($search !== '') {
-        $conditions[] = '(p.name LIKE :search_product OR p.sku LIKE :search_sku OR u.full_name LIKE :search_user OR im.notes LIKE :search_notes)';
+        $conditions[] = '(LOWER(p.name) LIKE LOWER(:search_product) OR LOWER(p.sku) LIKE LOWER(:search_sku) OR LOWER(u.full_name) LIKE LOWER(:search_user) OR LOWER(COALESCE(im.notes, \'\')) LIKE LOWER(:search_notes))';
         $searchTerm = '%' . $search . '%';
         $params['search_product'] = $searchTerm;
         $params['search_sku'] = $searchTerm;

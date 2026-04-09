@@ -79,7 +79,26 @@ function user_email_exists(string $email): bool
 
 function create_cashier_user(array $data): int
 {
-    $statement = database()->prepare(
+    $pdo = database();
+
+    if (database_is_pgsql()) {
+        $statement = $pdo->prepare(
+            'INSERT INTO users (full_name, email, password_hash, role, status)
+             VALUES (:full_name, :email, :password_hash, :role, :status)
+             RETURNING id'
+        );
+        $statement->execute([
+            'full_name' => $data['full_name'],
+            'email' => strtolower($data['email']),
+            'password_hash' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'role' => 'cashier',
+            'status' => $data['status'],
+        ]);
+
+        return (int) $statement->fetchColumn();
+    }
+
+    $statement = $pdo->prepare(
         'INSERT INTO users (full_name, email, password_hash, role, status)
          VALUES (:full_name, :email, :password_hash, :role, :status)'
     );
@@ -91,7 +110,7 @@ function create_cashier_user(array $data): int
         'status' => $data['status'],
     ]);
 
-    return (int) database()->lastInsertId();
+    return (int) $pdo->lastInsertId();
 }
 
 function fetch_users(string $search = ''): array
@@ -108,7 +127,7 @@ function fetch_users(string $search = ''): array
     $params = [];
 
     if ($search !== '') {
-        $sql .= ' WHERE full_name LIKE :search_name OR email LIKE :search_email OR role LIKE :search_role';
+        $sql .= ' WHERE LOWER(full_name) LIKE LOWER(:search_name) OR LOWER(email) LIKE LOWER(:search_email) OR LOWER(role) LIKE LOWER(:search_role)';
         $searchTerm = '%' . $search . '%';
         $params['search_name'] = $searchTerm;
         $params['search_email'] = $searchTerm;
@@ -128,8 +147,8 @@ function user_metrics(): array
     $statement = database()->query(
         'SELECT
             COUNT(*) AS total_users,
-            SUM(CASE WHEN role = "cashier" THEN 1 ELSE 0 END) AS total_cashiers,
-            SUM(CASE WHEN status = "active" THEN 1 ELSE 0 END) AS active_users
+            SUM(CASE WHEN role = \'cashier\' THEN 1 ELSE 0 END) AS total_cashiers,
+            SUM(CASE WHEN status = \'active\' THEN 1 ELSE 0 END) AS active_users
          FROM users'
     );
     $result = $statement->fetch();

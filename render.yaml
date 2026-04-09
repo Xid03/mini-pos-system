@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: mini-pos-system
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /login.php
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DB_DRIVER
+        value: pgsql
+      - key: DATABASE_URL
+        sync: false

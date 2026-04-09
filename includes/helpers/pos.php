@@ -70,11 +70,11 @@ function pos_product_catalog(string $search = ''): array
                 c.name AS category_name
             FROM products p
             INNER JOIN categories c ON c.id = p.category_id
-            WHERE p.status = "active"';
+            WHERE p.status = \'active\'';
     $params = [];
 
     if ($search !== '') {
-        $sql .= ' AND (p.name LIKE :search_name OR p.sku LIKE :search_sku OR c.name LIKE :search_category)';
+        $sql .= ' AND (LOWER(p.name) LIKE LOWER(:search_name) OR LOWER(p.sku) LIKE LOWER(:search_sku) OR LOWER(c.name) LIKE LOWER(:search_category))';
         $searchTerm = '%' . $search . '%';
         $params['search_name'] = $searchTerm;
         $params['search_sku'] = $searchTerm;
@@ -347,26 +347,50 @@ function complete_pos_checkout(array $cartItems, array $checkoutData, int $cashi
         $totals = pos_cart_totals($cartItems);
         $invoiceNumber = generate_invoice_number();
 
-        $saleStatement = $pdo->prepare(
-            'INSERT INTO sales (
-                invoice_number, cashier_id, subtotal, tax_amount, discount_amount, total_amount, paid_amount, balance_amount, payment_method
-             ) VALUES (
-                :invoice_number, :cashier_id, :subtotal, :tax_amount, :discount_amount, :total_amount, :paid_amount, :balance_amount, :payment_method
-             )'
-        );
-        $saleStatement->execute([
-            'invoice_number' => $invoiceNumber,
-            'cashier_id' => $cashierId,
-            'subtotal' => $totals['subtotal'],
-            'tax_amount' => $totals['tax_amount'],
-            'discount_amount' => $totals['discount_amount'],
-            'total_amount' => $totals['total_amount'],
-            'paid_amount' => $checkoutData['paid_amount'],
-            'balance_amount' => $checkoutData['balance_amount'],
-            'payment_method' => $checkoutData['payment_method'],
-        ]);
+        if (database_is_pgsql()) {
+            $saleStatement = $pdo->prepare(
+                'INSERT INTO sales (
+                    invoice_number, cashier_id, subtotal, tax_amount, discount_amount, total_amount, paid_amount, balance_amount, payment_method
+                 ) VALUES (
+                    :invoice_number, :cashier_id, :subtotal, :tax_amount, :discount_amount, :total_amount, :paid_amount, :balance_amount, :payment_method
+                 )
+                 RETURNING id'
+            );
+            $saleStatement->execute([
+                'invoice_number' => $invoiceNumber,
+                'cashier_id' => $cashierId,
+                'subtotal' => $totals['subtotal'],
+                'tax_amount' => $totals['tax_amount'],
+                'discount_amount' => $totals['discount_amount'],
+                'total_amount' => $totals['total_amount'],
+                'paid_amount' => $checkoutData['paid_amount'],
+                'balance_amount' => $checkoutData['balance_amount'],
+                'payment_method' => $checkoutData['payment_method'],
+            ]);
 
-        $saleId = (int) $pdo->lastInsertId();
+            $saleId = (int) $saleStatement->fetchColumn();
+        } else {
+            $saleStatement = $pdo->prepare(
+                'INSERT INTO sales (
+                    invoice_number, cashier_id, subtotal, tax_amount, discount_amount, total_amount, paid_amount, balance_amount, payment_method
+                 ) VALUES (
+                    :invoice_number, :cashier_id, :subtotal, :tax_amount, :discount_amount, :total_amount, :paid_amount, :balance_amount, :payment_method
+                 )'
+            );
+            $saleStatement->execute([
+                'invoice_number' => $invoiceNumber,
+                'cashier_id' => $cashierId,
+                'subtotal' => $totals['subtotal'],
+                'tax_amount' => $totals['tax_amount'],
+                'discount_amount' => $totals['discount_amount'],
+                'total_amount' => $totals['total_amount'],
+                'paid_amount' => $checkoutData['paid_amount'],
+                'balance_amount' => $checkoutData['balance_amount'],
+                'payment_method' => $checkoutData['payment_method'],
+            ]);
+
+            $saleId = (int) $pdo->lastInsertId();
+        }
 
         $saleItemStatement = $pdo->prepare(
             'INSERT INTO sale_items (sale_id, product_id, quantity, unit_price, line_total)

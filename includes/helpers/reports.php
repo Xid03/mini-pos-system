@@ -3,6 +3,27 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
 
+function report_month_number_expression(): string
+{
+    return database_is_pgsql()
+        ? 'EXTRACT(MONTH FROM s.created_at)::int'
+        : 'MONTH(s.created_at)';
+}
+
+function report_month_start_expression(): string
+{
+    return database_is_pgsql()
+        ? 'DATE_TRUNC(\'month\', s.created_at)::date'
+        : 'DATE_FORMAT(s.created_at, "%Y-%m-01")';
+}
+
+function report_year_condition(): string
+{
+    return database_is_pgsql()
+        ? 'EXTRACT(YEAR FROM s.created_at)::int = :year'
+        : 'YEAR(s.created_at) = :year';
+}
+
 function normalize_report_date(?string $value, string $fallback): string
 {
     $value = trim((string) $value);
@@ -115,16 +136,19 @@ function fetch_daily_sales_report(string $dateFrom, string $dateTo): array
 
 function fetch_monthly_sales_summary(int $year): array
 {
+    $monthNumberExpression = report_month_number_expression();
+    $monthStartExpression = report_month_start_expression();
+    $yearCondition = report_year_condition();
     $statement = database()->prepare(
         'SELECT
-            MONTH(s.created_at) AS month_number,
-            DATE_FORMAT(s.created_at, "%Y-%m-01") AS month_start,
+            ' . $monthNumberExpression . ' AS month_number,
+            ' . $monthStartExpression . ' AS month_start,
             COUNT(*) AS total_transactions,
             COALESCE(SUM(s.total_amount), 0) AS total_sales,
             COALESCE(AVG(s.total_amount), 0) AS average_sale
          FROM sales s
-         WHERE YEAR(s.created_at) = :year
-         GROUP BY YEAR(s.created_at), MONTH(s.created_at), DATE_FORMAT(s.created_at, "%Y-%m-01")
+         WHERE ' . $yearCondition . '
+         GROUP BY ' . $monthNumberExpression . ', ' . $monthStartExpression . '
          ORDER BY month_number DESC'
     );
     $statement->execute(['year' => $year]);
