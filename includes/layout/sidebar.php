@@ -6,7 +6,9 @@ require_once __DIR__ . '/../helpers/ui.php';
 <aside class="sidebar" id="appSidebar">
     <div class="brand-panel">
         <div class="brand-mark">
-            <span class="brand-mark__icon"><i class="bi bi-shop-window"></i></span>
+            <span class="brand-mark__icon">
+                <img src="<?= htmlspecialchars(url('image/logoicon.png'), ENT_QUOTES, 'UTF-8'); ?>" alt="<?= htmlspecialchars(APP_NAME, ENT_QUOTES, 'UTF-8'); ?> logo" class="brand-mark__logo">
+            </span>
             <div>
                 <p class="brand-eyebrow">Retail Suite</p>
                 <h1><?= APP_NAME; ?></h1>

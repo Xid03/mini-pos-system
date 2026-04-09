@@ -39,8 +39,7 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
                 </span>
                 <h1>Run daily sales and inventory with clarity.</h1>
                 <p>
-                    <?= APP_NAME; ?> is designed as a realistic junior developer portfolio project:
-                    clean dashboard patterns, scalable module structure, and a polished interface that fits POS and inventory workflows.
+                    <?= APP_NAME; ?> gives your team one place to manage sales, monitor inventory, and move quickly through daily store operations.
                 </p>
 
                 <div class="hero-stats">
@@ -50,7 +49,7 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
                     </div>
                     <div class="hero-stat">
                         <strong>128</strong>
-                        <span>Daily transactions preview</span>
+                        <span>Transactions tracked</span>
                     </div>
                     <div class="hero-stat">
                         <strong>99.2%</strong>
@@ -103,10 +102,10 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
                 <div class="auth-form-shell">
                     <span class="badge-soft-info mb-3">
                         <i class="bi bi-shield-lock-fill"></i>
-                        Step 2 Authentication Ready
+                        Secure Staff Access
                     </span>
                     <h2>Sign in to continue</h2>
-                    <p>Authentication is now connected with PHP sessions, MySQL, prepared statements, role-based access, and logout support.</p>
+                    <p>Use your authorized staff account to access the dashboard, inventory tools, and point-of-sale workspace.</p>
 
                     <?php require __DIR__ . '/includes/layout/flash-alerts.php'; ?>
 
@@ -120,19 +119,6 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
                             </div>
                         </div>
                     <?php endif; ?>
-
-                    <div class="demo-account-grid">
-                        <div class="demo-card">
-                            <span>Admin demo account</span>
-                            <strong>admin@minipos.local</strong>
-                            <span class="mt-2">Password: Admin@123</span>
-                        </div>
-                        <div class="demo-card">
-                            <span>Cashier demo account</span>
-                            <strong>cashier@minipos.local</strong>
-                            <span class="mt-2">Password: Cashier@123</span>
-                        </div>
-                    </div>
 
                     <form action="<?= htmlspecialchars(url('login.php'), ENT_QUOTES, 'UTF-8'); ?>" method="post" class="mt-2">
                         <?= csrf_input(); ?>
@@ -158,7 +144,7 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
                                     Remember this device
                                 </label>
                             </div>
-                            <span class="text-secondary small">Use the seed accounts after importing the Step 2 SQL files.</span>
+                            <span class="text-secondary small">Keep your account credentials secure.</span>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">
@@ -166,10 +152,6 @@ require __DIR__ . '/includes/layout/auth-shell-start.php';
                             Sign In
                         </button>
                     </form>
-
-                    <div class="helper-note">
-                        Setup note: copy <strong>includes/config/database.local.example.php</strong> to <strong>includes/config/database.local.php</strong>, update your MySQL credentials, then import the schema and seed SQL files.
-                    </div>
                 </div>
             </div>
         </div>

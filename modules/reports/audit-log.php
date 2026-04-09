@@ -27,7 +27,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
         <h3>Track sensitive system actions across authentication, catalog changes, inventory updates, and POS checkouts.</h3>
         <p>
             This audit view helps explain who made a change, what happened, and when it happened. It is useful for admin review,
-            debugging, and portfolio conversations around traceability and operational accountability.
+            debugging, and traceability across daily operations.
         </p>
         <div class="hero-actions">
             <a href="<?= htmlspecialchars(url('modules/reports/index.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary">
@@ -131,4 +131,3 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
     <?php endif; ?>
 </section>
 <?php require __DIR__ . '/../../includes/layout/app-shell-end.php'; ?>
-

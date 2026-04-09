@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageLoaderBar = pageLoader ? pageLoader.querySelector('.page-loader__bar') : null;
     const sidebarToggle = document.querySelector('[data-sidebar-toggle]');
     const sidebarDismiss = document.querySelector('[data-sidebar-dismiss]');
+    const notificationShell = document.querySelector('[data-notification-shell]');
+    const notificationToggle = document.querySelector('[data-notification-toggle]');
+    const notificationPanel = document.querySelector('[data-notification-panel]');
     const passwordToggle = document.querySelector('[data-password-toggle]');
     const passwordInput = document.querySelector('[data-password-input]');
     const posCheckoutForms = document.querySelectorAll('[data-pos-checkout]');
@@ -80,6 +83,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sidebarDismiss) {
         sidebarDismiss.addEventListener('click', () => {
             body.classList.remove('sidebar-open');
+        });
+    }
+
+    if (notificationShell && notificationToggle && notificationPanel) {
+        const closeNotifications = () => {
+            notificationPanel.hidden = true;
+            notificationPanel.classList.remove('is-open');
+            notificationToggle.setAttribute('aria-expanded', 'false');
+        };
+
+        notificationToggle.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const isOpen = notificationPanel.classList.contains('is-open');
+
+            if (isOpen) {
+                closeNotifications();
+                return;
+            }
+
+            notificationPanel.hidden = false;
+            notificationPanel.classList.add('is-open');
+            notificationToggle.setAttribute('aria-expanded', 'true');
+        });
+
+        notificationPanel.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+
+        document.addEventListener('click', () => {
+            closeNotifications();
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeNotifications();
+            }
         });
     }
 

@@ -15,7 +15,7 @@ $categoryOptions = $categoryOptions ?? [];
         </span>
         <h3><?= $isEditMode ? 'Update product information while keeping pricing and stock values consistent.' : 'Add a new product with clean pricing, stock, and category details.'; ?></h3>
         <p>
-            Product records feed later inventory and POS features, so the form focuses on practical business fields and readable validation.
+            Product records power inventory, sales, and reporting, so this form focuses on practical business fields and reliable validation.
         </p>
         <div class="hero-actions">
             <a href="<?= htmlspecialchars(url('modules/products/index.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-soft">
@@ -29,7 +29,7 @@ $categoryOptions = $categoryOptions ?? [];
         <article class="feature-card glass-card">
             <div class="feature-card__icon"><i class="bi bi-upc-scan"></i></div>
             <h4>SKU Driven</h4>
-            <p>Each product uses a unique SKU to keep later stock movement and POS processing reliable.</p>
+            <p>Each product uses a unique SKU to keep stock movement and POS processing reliable.</p>
         </article>
         <article class="feature-card glass-card">
             <div class="feature-card__icon"><i class="bi bi-cash-coin"></i></div>
@@ -42,7 +42,7 @@ $categoryOptions = $categoryOptions ?? [];
 <section class="section-card glass-card form-shell-card">
     <div class="mb-4">
         <h3 class="section-title"><?= $isEditMode ? 'Edit Product Form' : 'New Product Form'; ?></h3>
-        <p class="section-subtitle">Use accurate pricing and stock settings so future inventory and POS modules behave correctly.</p>
+        <p class="section-subtitle">Use accurate pricing and stock settings so inventory and sales data stay consistent.</p>
     </div>
 
     <form method="post" class="admin-form">

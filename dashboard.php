@@ -23,19 +23,18 @@ require __DIR__ . '/includes/layout/app-shell-start.php';
             <i class="bi bi-activity"></i>
             <?= $role === 'admin' ? 'Admin Dashboard' : 'Cashier Dashboard'; ?>
         </span>
-        <h3>Clean, modern POS operations designed for real-world portfolio storytelling.</h3>
+        <h3>Stay on top of sales, stock movement, and daily store activity.</h3>
         <p>
-            This dashboard now sits on top of the completed authentication, catalog, inventory, POS, transaction,
-            reporting, and audit modules. Admin users can oversee the business workflow while cashiers stay focused on sales.
+            Admin users can oversee catalog, inventory, reporting, and audit activity, while cashiers stay focused on fast and accurate sales.
         </p>
         <div class="hero-actions">
             <a href="<?= htmlspecialchars(url('modules/pos/index.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary">
                 <i class="bi bi-lightning-charge-fill me-2"></i>
                 Open POS Module
             </a>
-            <a href="<?= htmlspecialchars(url('README.md'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-soft">
-                <i class="bi bi-journal-code me-2"></i>
-                Read Project Overview
+            <a href="<?= htmlspecialchars(url('modules/transactions/index.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-soft">
+                <i class="bi bi-clock-history me-2"></i>
+                Transaction History
             </a>
         </div>
     </div>
@@ -145,7 +144,7 @@ require __DIR__ . '/includes/layout/app-shell-start.php';
         <article class="section-card glass-card">
             <div class="mb-3">
                 <h3 class="section-title">Quick Module Shortcuts</h3>
-                <p class="section-subtitle">Ready-made paths for the upcoming modules.</p>
+                <p class="section-subtitle">Jump directly into the areas your team uses most.</p>
             </div>
 
             <div class="shortcut-grid">
@@ -166,7 +165,7 @@ require __DIR__ . '/includes/layout/app-shell-start.php';
 </section>
 
 <footer class="footer-note">
-    <span>Version <?= APP_VERSION; ?> • Step 2 auth foundation completed</span>
-    <span>Shared hosting friendly structure using plain PHP, PDO prepared statements, Bootstrap, custom CSS, and session-based access control.</span>
+    <span>Version <?= APP_VERSION; ?> | Operations dashboard</span>
+    <span>Staff workspace for POS, inventory, transactions, reporting, and audit review.</span>
 </footer>
 <?php require __DIR__ . '/includes/layout/app-shell-end.php'; ?>

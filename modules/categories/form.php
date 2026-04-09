@@ -32,8 +32,8 @@ $isEditMode = $isEditMode ?? false;
         </article>
         <article class="feature-card glass-card">
             <div class="feature-card__icon"><i class="bi bi-layout-text-sidebar"></i></div>
-            <h4>Interview Friendly</h4>
-            <p>The form keeps business rules readable and easy to explain in a portfolio walkthrough.</p>
+            <h4>Clear Business Rules</h4>
+            <p>The form keeps category details readable so staff can maintain clean and reliable catalog data.</p>
         </article>
     </div>
 </section>
@@ -41,7 +41,7 @@ $isEditMode = $isEditMode ?? false;
 <section class="section-card glass-card form-shell-card">
     <div class="mb-4">
         <h3 class="section-title"><?= $isEditMode ? 'Edit Category Form' : 'New Category Form'; ?></h3>
-        <p class="section-subtitle">Fields marked here are used directly in later product management screens.</p>
+        <p class="section-subtitle">These details help keep products grouped clearly across the catalog and reports.</p>
     </div>
 
     <form method="post" class="admin-form">

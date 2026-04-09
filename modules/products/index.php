@@ -25,7 +25,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
         <h3>Manage your product catalog with pricing, stock levels, category mapping, and status control.</h3>
         <p>
             Products are the core of the POS and inventory modules. This screen keeps the data clear, validated,
-            and ready for stock movement, sales transactions, and reporting in the next steps.
+            and ready for stock movement, sales transactions, and reporting.
         </p>
         <div class="hero-actions">
             <a href="<?= htmlspecialchars(url('modules/products/create.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary">
@@ -50,7 +50,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
             <div class="summary-card__icon success"><i class="bi bi-check-circle-fill"></i></div>
             <span class="summary-card__label">Active Products</span>
             <strong class="summary-card__value"><?= $metrics['active_products']; ?></strong>
-            <span class="summary-card__change">Visible for future POS and inventory usage</span>
+            <span class="summary-card__change">Available for POS and inventory operations</span>
         </article>
         <article class="summary-card glass-card">
             <div class="summary-card__icon warning"><i class="bi bi-exclamation-triangle-fill"></i></div>
@@ -88,7 +88,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
         <div class="empty-state">
             <div class="empty-state__icon"><i class="bi bi-box-seam-fill"></i></div>
             <h4>No products found</h4>
-            <p><?= ($search !== '' || $status !== '') ? 'Try a different search keyword or clear the status filter.' : 'Create your first product to prepare for inventory and POS steps.'; ?></p>
+            <p><?= ($search !== '' || $status !== '') ? 'Try a different search keyword or clear the status filter.' : 'Create your first product to begin managing stock and sales.'; ?></p>
             <a href="<?= htmlspecialchars(url('modules/products/create.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary">Create Product</a>
         </div>
     <?php else: ?>

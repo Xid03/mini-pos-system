@@ -52,7 +52,7 @@ $pageTitle = 'Printable Receipt';
             <div>
                 <p class="receipt-brand-kicker">Mini POS System</p>
                 <h1>Sales Receipt</h1>
-                <p class="receipt-copy">Portfolio demo transaction receipt generated from the saved POS sale.</p>
+                <p class="receipt-copy">Receipt generated from the saved POS transaction.</p>
             </div>
             <div class="receipt-meta">
                 <strong><?= htmlspecialchars((string) $sale['invoice_number'], ENT_QUOTES, 'UTF-8'); ?></strong>

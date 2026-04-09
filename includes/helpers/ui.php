@@ -162,3 +162,91 @@ function visible_module_shortcuts(): array
         static fn (array $item): bool => in_array($role, $item['roles'], true)
     ));
 }
+
+function topbar_notifications(): array
+{
+    $today = date('Y-m-d');
+    $notifications = [];
+
+    try {
+        $todayOverview = report_overview_metrics($today, $today);
+        $inventoryTotals = inventory_metrics();
+        $transactionTotals = transaction_metrics();
+
+        if (current_user_role() === 'admin') {
+            if ($inventoryTotals['low_stock_products'] > 0) {
+                $notifications[] = [
+                    'title' => 'Low stock needs attention',
+                    'message' => $inventoryTotals['low_stock_products'] . ' product(s) are at or below their minimum level.',
+                    'href' => url('modules/inventory/index.php?stock=low'),
+                    'icon' => 'bi-exclamation-triangle-fill',
+                    'tone' => 'warning',
+                ];
+            }
+
+            if ($todayOverview['total_transactions'] > 0) {
+                $notifications[] = [
+                    'title' => 'Today\'s sales updated',
+                    'message' => $todayOverview['total_transactions'] . ' transaction(s) recorded today for RM ' . number_format($todayOverview['total_sales'], 2) . '.',
+                    'href' => url('modules/reports/index.php'),
+                    'icon' => 'bi-graph-up-arrow',
+                    'tone' => 'primary',
+                ];
+            }
+
+            if ($transactionTotals['total_transactions'] > 0) {
+                $notifications[] = [
+                    'title' => 'Audit and reports ready',
+                    'message' => 'Review transactions, exports, and audit activity from the reports workspace.',
+                    'href' => url('modules/reports/audit-log.php'),
+                    'icon' => 'bi-shield-check',
+                    'tone' => 'info',
+                ];
+            }
+        } else {
+            if ($todayOverview['total_transactions'] > 0) {
+                $notifications[] = [
+                    'title' => 'Counter activity today',
+                    'message' => $todayOverview['total_transactions'] . ' sale(s) have already been completed today.',
+                    'href' => url('modules/transactions/index.php'),
+                    'icon' => 'bi-receipt-cutoff',
+                    'tone' => 'primary',
+                ];
+            }
+
+            if ($transactionTotals['total_transactions'] > 0) {
+                $notifications[] = [
+                    'title' => 'Transaction history available',
+                    'message' => 'Open recent receipts and completed sales from the transaction module.',
+                    'href' => url('modules/transactions/index.php'),
+                    'icon' => 'bi-clock-history',
+                    'tone' => 'success',
+                ];
+            }
+
+            if ($inventoryTotals['low_stock_products'] > 0) {
+                $notifications[] = [
+                    'title' => 'Some products are running low',
+                    'message' => 'Sell carefully and coordinate with the admin if customers request higher quantities.',
+                    'href' => url('modules/pos/index.php'),
+                    'icon' => 'bi-box-seam-fill',
+                    'tone' => 'warning',
+                ];
+            }
+        }
+    } catch (Throwable) {
+        $notifications = [];
+    }
+
+    if ($notifications === []) {
+        $notifications[] = [
+            'title' => 'No new alerts',
+            'message' => 'Everything looks quiet right now. Your workspace is ready to use.',
+            'href' => current_user_role() === 'admin' ? url('modules/reports/index.php') : url('modules/pos/index.php'),
+            'icon' => 'bi-check2-circle',
+            'tone' => 'success',
+        ];
+    }
+
+    return array_slice($notifications, 0, 4);
+}

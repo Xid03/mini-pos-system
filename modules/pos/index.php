@@ -132,7 +132,7 @@ require __DIR__ . '/../../includes/layout/app-shell-start.php';
         <div class="admin-toolbar">
             <div>
                 <h3 class="section-title">Latest Completed Sale</h3>
-                <p class="section-subtitle">Quick confirmation after checkout before receipt and history screens arrive in Step 6.</p>
+                <p class="section-subtitle">Quick confirmation after checkout with direct access to receipt and transaction details.</p>
             </div>
             <div class="table-actions">
                 <a href="<?= htmlspecialchars(url('modules/transactions/view.php?id=' . (int) $recentSale['sale_id']), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-light">View Details</a>
