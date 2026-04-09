@@ -279,16 +279,51 @@ This project is intentionally structured to be easy to move onto basic PHP hosti
 - if your host provides a newer PHP version selector, use PHP 8.x
 - verify `pdo_mysql` is enabled on the host
 
-## Suggested Screenshots For Portfolio
+## Screenshots
 
-- login page
-- dashboard
-- product management page
-- inventory page
-- POS page with cart
-- transaction detail page
-- reports page
-- audit log page
+### Login Page
+
+![Login Page](docs/screenshots/login-page.png)
+
+### Dashboard Overview
+
+![Dashboard Overview](docs/screenshots/dashboard-overview.png)
+
+### Product Management
+
+![Product Management](docs/screenshots/product-management.png)
+
+### Product List
+
+![Product List](docs/screenshots/product-list.png)
+
+### Inventory Management
+
+![Inventory Management](docs/screenshots/inventory-management.png)
+
+### Inventory List
+
+![Inventory List](docs/screenshots/inventory-list.png)
+
+### POS Transaction Screen
+
+![POS Transaction Screen](docs/screenshots/pos-transaction-screen.png)
+
+### Transaction Detail
+
+![Transaction Detail](docs/screenshots/transaction-detail.png)
+
+### Reports Dashboard
+
+![Reports Dashboard](docs/screenshots/reports-dashboard.png)
+
+### Audit Log
+
+![Audit Log](docs/screenshots/audit-log.png)
+
+### User Management
+
+![User Management](docs/screenshots/user-management.png)
 
 ## Current Status
 
