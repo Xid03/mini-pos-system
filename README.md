@@ -325,16 +325,4 @@ This project is intentionally structured to be easy to move onto basic PHP hosti
 
 ![User Management](docs/screenshots/user-management.png)
 
-## Current Status
 
-This project now includes the full Step 1 to Step 9 roadmap:
-
-- UI foundation
-- authentication and role access
-- category and product CRUD
-- inventory management
-- POS transactions
-- receipt and transaction history
-- reports
-- audit, export, and security improvements
-- final polish, sample data, testing notes, and deployment guidance
